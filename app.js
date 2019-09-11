@@ -7,7 +7,26 @@ var budgetController = (function(){
     }
     return {
          publicTest: function(b){
-            console.log(addTwoNumbers(b));
+           return addTwoNumbers(b);
          }
     }
 })();
+
+
+
+
+
+var UIController = (function(){
+    //some code
+})();
+
+
+
+var controller = (function(budgetCtrl,UICtrl){
+    var z = budgetCtrl.publicTest(5)
+    return{
+        anotherPublicTest: function(){
+            console.log(z);
+        }
+    }
+})(budgetController,UIController);
