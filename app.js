@@ -11,6 +11,7 @@ var budgetController = (function(){
 
 // UI-CONTROLLER
 var UIController = (function(){
+    // object containing querySelector strings 
     var DOMstrings = {
         inputType: ".add__type",
         inputDescription: ".add__description",
