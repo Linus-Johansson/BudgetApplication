@@ -4,10 +4,30 @@
 //BUDGET CONTROLLER
 var budgetController = (function(){
  // some code
+var Expense = function(id, desc,value){
+        this.id = id;
+        this.desc = desc;
+        this.value = value;
+    };
+
+    var Income = function(id, desc,value){
+        this.id = id;
+        this.desc = desc;
+        this.value = value;
+    };
+
+    var data ={
+        allItems: {
+            exp: [],
+            inc: [],
+        },
+        totals:{
+            totalInc: 0,
+            totalExp: 0
+        }
+    }
+
 })();
-
-
-
 
 // UI-CONTROLLER
 var UIController = (function(){
