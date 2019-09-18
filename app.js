@@ -63,7 +63,9 @@ var UIController = (function(){
         inputType: ".add__type",
         inputDescription: ".add__description",
         inputValue: ".add__value",
-        addItemBTN: ".add__btn"
+        addItemBTN: ".add__btn",
+		incContainer: ".income__list",
+		expContainer: ".expenses__list"
     };
     return{
         getUserInput: function(){
@@ -74,6 +76,28 @@ var UIController = (function(){
             }
            
         },
+		
+		addListItem: function(obj,type){
+			var html,newHtml, element;
+			//1. create html string with placeholder text.
+			if(type === "inc"){
+				element = DOMstrings.incContainer;
+				html = "<div class='item clearfix' id='income-%id%'><div class='item__description'>%description%</div> <div class='right clearfix'><div class='item__value'>%value%</div><div class='item__delete'><button class='item__delete--btn'><i class='ion-ios-close-outline'></i></button></div></div></div>";
+			}else if(type === "exp"){
+				element = DOMstrings.expContainer;
+				html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">%percentage%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+			}
+			
+			// 2. replace placeholdertext with data from obj
+				newHtml = html.replace("%id%",obj.id);
+				newHtml = newHtml.replace("%description%",obj.desc);
+				newHtml = newHtml.replace("%value%",obj.value);
+		    //3. insert html into DOM
+				
+				document.querySelector(element).insertAdjacentHTML("beforeend",newHtml);;
+				
+		},
+		
         getDOMstrings:function(){
             return DOMstrings;
         }
@@ -104,7 +128,7 @@ var controller = (function(budgetCtrl,UICtrl){
         // 2.add item to budget controller
         newItem = budgetCtrl.addItem(input.type,input.desc,input.value);
         // 3.add new item to UI 
-        
+        UICtrl.addListItem(newItem,input.type)
         // 4.calc budget
         
         // 5.display budget in UI
