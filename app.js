@@ -98,6 +98,20 @@ var UIController = (function(){
 				
 		},
 		
+		clearFields: function(){
+			var fields,fieldsArr;
+			fields = document.querySelectorAll(DOMstrings.inputDescription + ', '+DOMstrings.inputValue);
+			
+			fieldsArr = Array.prototype.slice.call(fields);// tricking the slice method that it gets an array, even though 'querySelectorAll' returns a list.
+			
+			fieldsArr.forEach(function (current,index,array){
+				current.value ="";
+			});
+			fieldsArr[0].focus();// sets focus back on first item in fieldsArr, I.E desc input field.
+			
+		},
+		
+		
         getDOMstrings:function(){
             return DOMstrings;
         }
@@ -128,10 +142,12 @@ var controller = (function(budgetCtrl,UICtrl){
         // 2.add item to budget controller
         newItem = budgetCtrl.addItem(input.type,input.desc,input.value);
         // 3.add new item to UI 
-        UICtrl.addListItem(newItem,input.type)
-        // 4.calc budget
+        UICtrl.addListItem(newItem,input.type);
+		// 4. clear the fields
+        UICtrl.clearFields();
+		// 5.calc budget
         
-        // 5.display budget in UI
+        // 6.display budget in UI
     }
 
     return{
