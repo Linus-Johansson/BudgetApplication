@@ -1,5 +1,8 @@
 // Module pattern
-
+// IFFE:
+/*
+An Immediately Invoked Function Expression is a good way at protecting the scope of your function and the variables within it.
+*/
 
 //BUDGET CONTROLLER
 var budgetController = (function(){
@@ -49,6 +52,13 @@ var Expense = function(id, desc,value){
             return newItem;
 
         },
+		//TODO
+		calculateBudget: function(){
+			// 1. calculate total income.
+			// 2. calculate total expenses.
+			// 3. calculate budgetmonth.
+		},
+		
         testing: function(){
            console.log(data);
         }
@@ -72,12 +82,13 @@ var UIController = (function(){
             return {
                 type: document.querySelector(DOMstrings.inputType).value, // will be either inc or exp
                 desc: document.querySelector(DOMstrings.inputDescription).value,
-                value: document.querySelector(DOMstrings.inputValue).value
+                value:parseFloat(document.querySelector(DOMstrings.inputValue).value) 
             }
            
         },
 		
 		addListItem: function(obj,type){
+			
 			var html,newHtml, element;
 			//1. create html string with placeholder text.
 			if(type === "inc"){
@@ -94,7 +105,7 @@ var UIController = (function(){
 				newHtml = newHtml.replace("%value%",obj.value);
 		    //3. insert html into DOM
 				
-				document.querySelector(element).insertAdjacentHTML("beforeend",newHtml);;
+				document.querySelector(element).insertAdjacentHTML("beforeend",newHtml);
 				
 		},
 		
@@ -134,20 +145,28 @@ var controller = (function(budgetCtrl,UICtrl){
             } 
         });
     }
+	var updateBudget = function(){
+		// 1.calc budget
+        // 2. 
+        // 3.display budget in UI
+	}
     var ctrlAddItem = function (){
         var input,newItem;
         // 1.get input data from fields
         input = UICtrl.getUserInput();
         
-        // 2.add item to budget controller
-        newItem = budgetCtrl.addItem(input.type,input.desc,input.value);
-        // 3.add new item to UI 
-        UICtrl.addListItem(newItem,input.type);
-		// 4. clear the fields
-        UICtrl.clearFields();
-		// 5.calc budget
-        
-        // 6.display budget in UI
+		if(input.desc != "" && !isNaN(input.value) && input.value > 0){
+				// 2.add item to budget controller
+				newItem = budgetCtrl.addItem(input.type,input.desc,input.value);
+				// 3.add new item to UI 
+				UICtrl.addListItem(newItem,input.type);
+				// 4. clear the fields
+				UICtrl.clearFields();
+				//5. Calculate & update budget
+		updateBudget();
+			}else{
+				
+			}		
     }
 
     return{
