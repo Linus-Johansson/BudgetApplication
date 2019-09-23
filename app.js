@@ -6,33 +6,52 @@ An Immediately Invoked Function Expression is a good way at protecting the scope
 
 //BUDGET CONTROLLER
 var budgetController = (function(){
- // some code
+
+	// expense object.
 var Expense = function(id, desc,value){
         this.id = id;
         this.desc = desc;
         this.value = value;
     };
-
+	// income object
     var Income = function(id, desc,value){
         this.id = id;
         this.desc = desc;
         this.value = value;
     };
-
+	
+	// app's datastructure.
     var data ={
         allItems: {
             exp: [],
             inc: [],
         },
         totals:{
-            totalInc: 0,
-            totalExp: 0
-        }
+            exp: 0,
+            inc: 0
+        },
+		budget: 0,
+		percentage: -1
     };
-
+	
+	// function for adding together all incomes or expenses.
+	var calculateTotal = function(type){
+		// varible for holding the total sum.
+		var sum = 0;
+		// select either income or expense array and loop trough each item.
+		data.allItems[type].forEach(function(curr){
+			// add current item to sum var.
+			sum += curr.value; 
+		});
+		// sets the total for income/expenses.
+		data.totals[type] = sum;
+	};
+	
     return{
         addItem: function(type,desc,val){
-            var newItem, ID;
+            
+			var newItem, ID;
+			
             // create new ID 
             if(data.allItems[type].length >0){
                 ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
@@ -54,9 +73,29 @@ var Expense = function(id, desc,value){
         },
 		//TODO
 		calculateBudget: function(){
-			// 1. calculate total income.
-			// 2. calculate total expenses.
-			// 3. calculate budgetmonth.
+		// 1. calculate total income & expenses.
+		
+			calculateTotal('exp');
+			calculateTotal('inc');
+			
+		// 2. calculate the budget inc - exp.
+			data.budget = data.totals.inc - data.totals.exp;
+		// 3. calculate the percentage of inc that we spent.
+			if(data.totals.inc > 0){
+				data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
+			}else{
+				data.percentage = -1;
+			}
+			
+		},
+		
+		getBudget: function(){
+			return {
+				budget: data.budget,
+				totalInc: data.totals.inc,
+				totalExp: data.totals.exp,
+				percentage: data.percentage
+			}
 		},
 		
         testing: function(){
@@ -70,12 +109,17 @@ var Expense = function(id, desc,value){
 var UIController = (function(){
     // object containing querySelector strings 
     var DOMstrings = {
+		budgetLabel: ".budget__value",
+		budgetIncomeLabel: ".budget__income--value",
+		budgetExpenseLabel: ".budget__expenses--value",
+		budgetPercentageLabel: ".budget__expenses--percentage",
         inputType: ".add__type",
         inputDescription: ".add__description",
         inputValue: ".add__value",
         addItemBTN: ".add__btn",
 		incContainer: ".income__list",
-		expContainer: ".expenses__list"
+		expContainer: ".expenses__list",
+		
     };
     return{
         getUserInput: function(){
@@ -121,8 +165,20 @@ var UIController = (function(){
 			fieldsArr[0].focus();// sets focus back on first item in fieldsArr, I.E desc input field.
 			
 		},
-		
-		
+		// displays the budget in the UI
+		displayBudget: function(obj){
+			document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
+			document.querySelector(DOMstrings.budgetIncomeLabel).textContent = obj.totalInc;
+			document.querySelector(DOMstrings.budgetExpenseLabel).textContent = obj.totalExp;
+			document.querySelector(DOMstrings.budgetPercentageLabel).textContent = obj.percentage;
+			
+			if(obj.percentage > 0 ){
+				document.querySelector(DOMstrings.budgetPercentageLabel).textContent = obj.percentage + '%';
+			}else{
+				document.querySelector(DOMstrings.budgetPercentageLabel).textContent = '----';
+			}
+			
+		},
         getDOMstrings:function(){
             return DOMstrings;
         }
@@ -146,9 +202,14 @@ var controller = (function(budgetCtrl,UICtrl){
         });
     }
 	var updateBudget = function(){
+		var budget;
 		// 1.calc budget
-        // 2. 
+		budgetCtrl.calculateBudget();
+
+        // 2. return the budget-object with calculations
+		budget = budgetCtrl.getBudget();
         // 3.display budget in UI
+		UICtrl.displayBudget(budget);
 	}
     var ctrlAddItem = function (){
         var input,newItem;
@@ -163,7 +224,7 @@ var controller = (function(budgetCtrl,UICtrl){
 				// 4. clear the fields
 				UICtrl.clearFields();
 				//5. Calculate & update budget
-		updateBudget();
+				updateBudget();
 			}else{
 				
 			}		
@@ -172,6 +233,12 @@ var controller = (function(budgetCtrl,UICtrl){
     return{
         init: function(){
             console.log("Application has started.");
+			UICtrl.displayBudget({
+				budget: 0,
+				totalInc: 0,
+				totalExp: 0,
+				percentage: -1
+			})
             setupEventListners();
             
         }
