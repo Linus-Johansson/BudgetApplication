@@ -12,7 +12,20 @@ var Expense = function(id, desc,value){
         this.id = id;
         this.desc = desc;
         this.value = value;
+		this.percentage = -1;
     };
+	// every expense obj created will enherit this method.
+	Expense.prototype.calcPercentage = function(totalIncome){
+		if(totalIncome > 0){
+			this.percentage = Math.round((this.value / totalIncome)*100);
+		}else{
+			this.percentage = -1;
+		}	
+	};
+	Expense.prototype.getPercentage = function(){
+		return this.percentage;
+	}
+	
 	// income object
     var Income = function(id, desc,value){
         this.id = id;
@@ -48,6 +61,7 @@ var Expense = function(id, desc,value){
 	};
 	
     return{
+		
         addItem: function(type,desc,val){
             
 			var newItem, ID;
@@ -71,10 +85,25 @@ var Expense = function(id, desc,value){
             return newItem;
 
         },
+		
+		deleteItem: function(type,itemID){
+			// id = 3
+			var ids, index;
+			// loop over all elements in a inc or exp array, and put the just the ids in a new array. 
+			ids = data.allItems[type].map(function(curr){
+				return curr.id;
+			});
+			
+			//index holds id of the element to be removed
+			index = ids.indexOf(itemID)// return index number of the element of the array
+			
+			if(index !== -1){
+				data.allItems[type].splice(index, 1);
+			}
+		},
 		//TODO
 		calculateBudget: function(){
 		// 1. calculate total income & expenses.
-		
 			calculateTotal('exp');
 			calculateTotal('inc');
 			
@@ -87,6 +116,22 @@ var Expense = function(id, desc,value){
 				data.percentage = -1;
 			}
 			
+		},
+		
+		calculatePercentages: function(){
+			data.allItems.exp.forEach(function(curr){
+				curr.calcPercentage(data.totals.inc);
+			});
+				
+			
+		},
+		
+		getPercentages: function(){
+			var allPercentages;
+			allPercentages = data.allItems.exp.map(function(curr){
+				return curr.getPercentage();
+			});
+			return allPercentages;
 		},
 		
 		getBudget: function(){
@@ -119,6 +164,7 @@ var UIController = (function(){
         addItemBTN: ".add__btn",
 		incContainer: ".income__list",
 		expContainer: ".expenses__list",
+		itemContainer: ".container"
 		
     };
     return{
@@ -137,10 +183,10 @@ var UIController = (function(){
 			//1. create html string with placeholder text.
 			if(type === "inc"){
 				element = DOMstrings.incContainer;
-				html = "<div class='item clearfix' id='income-%id%'><div class='item__description'>%description%</div> <div class='right clearfix'><div class='item__value'>%value%</div><div class='item__delete'><button class='item__delete--btn'><i class='ion-ios-close-outline'></i></button></div></div></div>";
+				html = "<div class='item clearfix' id='inc-%id%'><div class='item__description'>%description%</div> <div class='right clearfix'><div class='item__value'>%value%</div><div class='item__delete'><button class='item__delete--btn'><i class='ion-ios-close-outline'></i></button></div></div></div>";
 			}else if(type === "exp"){
 				element = DOMstrings.expContainer;
-				html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">%percentage%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+				html = '<div class="item clearfix" id="exp-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">45</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
 			}
 			
 			// 2. replace placeholdertext with data from obj
@@ -151,6 +197,12 @@ var UIController = (function(){
 				
 				document.querySelector(element).insertAdjacentHTML("beforeend",newHtml);
 				
+		},
+		
+		deleteListItem: function(selectorID){
+			var el = document.getElementById(selectorID);
+			el.parentNode.removeChild(el)
+			
 		},
 		
 		clearFields: function(){
@@ -200,7 +252,10 @@ var controller = (function(budgetCtrl,UICtrl){
                 ctrlAddItem();
             } 
         });
+		
+		document.querySelector(DOM.itemContainer).addEventListener("click",ctrlDeleteItem);
     }
+	
 	var updateBudget = function(){
 		var budget;
 		// 1.calc budget
@@ -211,6 +266,18 @@ var controller = (function(budgetCtrl,UICtrl){
         // 3.display budget in UI
 		UICtrl.displayBudget(budget);
 	}
+	
+	var updateItemProcentage = function(){
+		var percentages;
+		// 1. calculate percentages
+		budgetCtrl.calculatePercentages();
+		// 2. read from budget controller
+		 percentages = budgetCtrl.getPercentages();
+		// 3. update UI with new percentages
+		console.log(percentages);
+		
+	}
+	
     var ctrlAddItem = function (){
         var input,newItem;
         // 1.get input data from fields
@@ -223,12 +290,39 @@ var controller = (function(budgetCtrl,UICtrl){
 				UICtrl.addListItem(newItem,input.type);
 				// 4. clear the fields
 				UICtrl.clearFields();
-				//5. Calculate & update budget
+				// 5. Calculate & update budget
 				updateBudget();
+				// 6. update item percentages
+				updateItemProcentage();
 			}else{
 				
 			}		
     }
+	
+	var ctrlDeleteItem = function(event){
+		
+		var itemID,splitID,type,ID;
+		// ITEMID holds info that tells if the item is inc or exp.
+		itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+		
+		if(itemID){
+			//format of id: inc-1 , exp-1
+			splitID = itemID.split('-');// using split we isolate type and id into their own variables.
+			type = splitID[0];
+			ID = parseInt(splitID[1]);
+			// now everything is set for removing an item from datastructure & UI.
+			
+			// TODO:
+			// 1. delete item from datasctructure
+			budgetCtrl.deleteItem(type,ID);
+			// 2. delete from UI 
+			UICtrl.deleteListItem(itemID);
+			// 3. update & show new budget
+			updateBudget();
+			// 4. update percentages
+			updateItemProcentage();
+		}
+	};
 
     return{
         init: function(){
