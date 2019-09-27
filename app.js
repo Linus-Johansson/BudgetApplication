@@ -2,6 +2,7 @@
 // IFFE:
 /*
 An Immediately Invoked Function Expression is a good way at protecting the scope of your function and the variables within it.
+The idea then is to return only the parts we need, leaving the other code out of the global scope.
 */
 
 //BUDGET CONTROLLER
@@ -168,6 +169,38 @@ var UIController = (function(){
 		expensePercentageLabel: ".item__percentage"
 		
     };
+	
+	var formatNumber = function(num, type){
+		
+			var numSplit,intPart,decimalPart,sign;
+			/*
+			plus or minus before number.
+			exactly 2 decimal points.
+			comma seperating the thousands.
+			2345,34353 --> +2,345,34			
+			*/
+			
+			num = Math.abs(num);// turns number passed into method to its absolute. 
+			num = num.toFixed(2);// makes sure  number has 2 decimals.
+			
+			console.log(num)
+			
+			numSplit = num.split(".");// splits passed in number into an array with . as delimiter
+			console.log(numSplit)
+			intPart = numSplit[0];// number part.
+			console.log(intPart)
+			//checks to see if its a number in the thousands.
+			if(intPart.length > 3){// if true..
+				intPart = intPart.substr(0,intPart.length - 3) +","+ intPart.substr(intPart.length-3, 3);// puts the comma in the rigth place.
+			}
+			console.log(intPart)
+			decimalPart = numSplit[1];// decimal part.
+			
+			// type === "exp" ? sign ="-" : sign ="+"; --- checks if its either a expense or income, and sets the +/- sign accordingly.
+			
+			return (type === "exp" ? sign ="-" : "+")+ " "+ intPart+"."+decimalPart;
+		};
+		
     return{
         getUserInput: function(){
             return {
@@ -193,7 +226,7 @@ var UIController = (function(){
 			// 2. replace placeholdertext with data from obj
 				newHtml = html.replace("%id%",obj.id);
 				newHtml = newHtml.replace("%description%",obj.desc);
-				newHtml = newHtml.replace("%value%",obj.value);
+				newHtml = newHtml.replace("%value%",formatNumber(obj.value,type));
 		    //3. insert html into DOM
 				
 				document.querySelector(element).insertAdjacentHTML("beforeend",newHtml);
@@ -220,9 +253,14 @@ var UIController = (function(){
 		},
 		// displays the budget in the UI
 		displayBudget: function(obj){
-			document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
-			document.querySelector(DOMstrings.budgetIncomeLabel).textContent = obj.totalInc;
-			document.querySelector(DOMstrings.budgetExpenseLabel).textContent = obj.totalExp;
+			var type;
+			
+			obj.budget > 0 ? type = "inc" : type = "exp";
+			console.log(type);
+			
+			document.querySelector(DOMstrings.budgetLabel).textContent = formatNumber(obj.budget,type);
+			document.querySelector(DOMstrings.budgetIncomeLabel).textContent = formatNumber(obj.totalInc,"inc");
+			document.querySelector(DOMstrings.budgetExpenseLabel).textContent = formatNumber(obj.totalExp,"exp");
 			document.querySelector(DOMstrings.budgetPercentageLabel).textContent = obj.percentage;
 			
 			if(obj.percentage > 0 ){
