@@ -1,0 +1,53 @@
+Systemansvarig (SA)
+
+Som systemansvarig har jag helhetsansvaret för utveckling, förvaltning och drift för systemet/systemen som jag ansvarar för gentemot systemägaren. Jag är leverantörssidans kontaktperson i alla frågor om systemet. Den Systemansvarige ska även stödja systemägaren gällande frågor om datakvalitet.
+Kompetenskrav för innehavare av rollen
+•	Kunskap om berörd verksamhet
+•	God kunskap om systemets funktioner och struktur, uppbyggnad och tekniska plattform (innefattar kunskap i de utvecklingsverktyg och de processer som används för aktuell plattform)
+•	Administrativ förmåga (t ex ekonomisk planering och uppföljning)
+•	God kommunikationsförmåga
+•	Förmåga att arbeta i grupp
+Dokumentation
+Ansvar           
+•	Att systemet är dokumenterat enligt kraven som ställs.
+
+Hjälp och stöd
+Ansvar
+Hjälpa och stödja systemägare, användare och andra inblandade, gällande tekniska problem i systemet
+Förvalta proaktivt
+Ansvar
+•	Se till att kompetens om systemet uppbyggnad, innehåll och hur den stödjer verksamheten finns (tillsammans med närmaste chef)
+•	Att IT-sidans ratingrating för systemet är utförd, vilken fokuserar på effektivitet o kvalitet i systemet.
+•	Säkra att det finns en utvecklingsmiljö och tre nivåer av testmiljöer (FT, ST, PT) enligt instruktioner om testmiljöer i Testcenter.
+•	Se till att kvalitetssäkring av systemet utförs på bästa sätt, t.ex. genom kodgranskningar och test av både funktionella och icke-funktionella krav
+•	Se till att utvecklare (med flera) följer regler, förordningar och checklistor
+ För köpta system tillkommer:
+•	Säkra att leverantörens release- och livscykel planer är förenliga med våra planer för de tekniska miljöerna(driftsmiljöer) 
+Informationssäkerhet och regelefterlevnad
+Ansvar
+•	Kontrollera att systemet loggar rätt information (spårbarhet)
+•	Verifiera integriteten (datakvalitet) och tillgänglighet av systemets data
+•	Att systemet uppfyller SLA
+•	Om externa leverantörer är inblandade, se till att avtalet med leverantören uppfyller kraven i SLA
+ 
+Befogenheter
+•	Delegera arbetet om systemets databaser till en lokal databas administratör (LDBA), om det finns en utsedd. Detta medför att LDBA kan arbeta proaktivt med databaserna
+ 
+Behörigheter
+Ansvar
+•	Veta hur systemets behörigheter är implementerade.
+•	Veta vilka andra behörigheter som systemet är beroende av samt hur förändring av dessa behörigheter görs.
+Ekonomi
+Ansvar
+•	Bevaka aktivt kostnaderna för systemet i drift och förvaltning och rapportera dessa till Systemägaren.
+ Löpande produktion
+Ansvar
+•	Säkerställ att systemet är igång och fungerar
+•	Åtgärda brådskande produktionsstörningar
+Befogenheter
+•	Besluta om åtgärder vid produktionsstörning (tillsammans med systemägaren)
+
+
+
+
+
